@@ -16,12 +16,14 @@
 pragma solidity ^0.8.17;
 
 import {IBonsaiRelay} from "./IBonsaiRelay.sol";
+import {ISHA256, SHA256_ADDR} from "./ISHA256.sol";
 
 contract CallbackDummy {
     uint256 public counter;
     IBonsaiRelay bonsai_relay;
     bytes32 image_id;
     address owner;
+    ISHA256 constant sha256Hasher = ISHA256(SHA256_ADDR);
 
     constructor(bytes32 _image_id, IBonsaiRelay _bonsai_relay) {
         owner = msg.sender;
@@ -38,7 +40,7 @@ contract CallbackDummy {
     }
 
     function call_me_internal(uint256 number, bool guess) internal returns (uint256, bytes32, bool) {
-        bytes32 result = sha256(abi.encodePacked(number));
+        bytes32 result = sha256Hasher.hash(abi.encodePacked(number));
         bool something = uint256(result) % 2 == 0;
         bool is_ok = guess && something;
         return (counter++, result, is_ok);

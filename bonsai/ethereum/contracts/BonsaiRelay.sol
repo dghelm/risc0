@@ -18,10 +18,12 @@ pragma solidity ^0.8.17;
 
 import {IBonsaiRelay, Callback, CallbackAuthorization} from "./IBonsaiRelay.sol";
 import {IRiscZeroVerifier} from "./IRiscZeroVerifier.sol";
+import {ISHA256, SHA256_ADDR} from "./ISHA256.sol";
 
 /// @notice Bonsai Relay contract supporting authenticated communication from zkVM guest programs.
 contract BonsaiRelay is IBonsaiRelay {
     IRiscZeroVerifier internal immutable verifier;
+    ISHA256 constant private sha256Hasher = ISHA256(SHA256_ADDR);
 
     constructor(IRiscZeroVerifier verifier_) {
         verifier = verifier_;
@@ -51,7 +53,7 @@ contract BonsaiRelay is IBonsaiRelay {
         view
         returns (bool)
     {
-        return verifier.verify(auth.seal, imageId, auth.postStateDigest, sha256(journal));
+        return verifier.verify(auth.seal, imageId, auth.postStateDigest, sha256Hasher.hash(journal));
     }
 
     /// @inheritdoc IBonsaiRelay

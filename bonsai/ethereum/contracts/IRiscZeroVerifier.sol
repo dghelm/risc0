@@ -16,6 +16,8 @@
 
 pragma solidity ^0.8.9;
 
+import {ISHA256, SHA256_ADDR} from "./ISHA256.sol";
+
 /// @notice Indicator for the overall system at the end of execution covered by this proof.
 enum SystemExitCode {
     Halted,
@@ -46,10 +48,12 @@ struct ReceiptMetadata {
 }
 
 library ReceiptMetadataLib {
+    ISHA256 constant sha256Hasher = ISHA256(SHA256_ADDR);
+    // Compiler sha256: Initial value for constant variable has to be compile-time constant.
     bytes32 constant TAG_DIGEST = sha256("risc0.ReceiptMeta");
 
     function digest(ReceiptMetadata memory meta) internal pure returns (bytes32) {
-        return sha256(
+        return sha256Hasher.hash(
             abi.encodePacked(
                 TAG_DIGEST,
                 // down
