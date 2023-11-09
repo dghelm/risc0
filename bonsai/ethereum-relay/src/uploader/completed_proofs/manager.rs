@@ -100,6 +100,7 @@ impl<S: Storage> BonsaiCompleteProofManager<S> {
 
         let pending_tx =
             contract_call
+                .legacy()
                 .send()
                 .await
                 .map_err(|e| BonsaiCompleteProofManagerError::Ethers {
